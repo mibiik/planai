@@ -6,6 +6,7 @@ interface StudyTrackerProps {
     subjects: StudySubject[];
     onSubjectsChange: (subjects: StudySubject[]) => void;
     onScheduleStudySession: (subject: StudySubject, topic: StudyTopic) => void;
+    isDarkMode?: boolean;
 }
 
 
@@ -15,25 +16,30 @@ const DeleteConfirmationModal: React.FC<{
     onConfirm: () => void;
     itemName: string;
     itemType: string;
-}> = ({ isOpen, onClose, onConfirm, itemName, itemType }) => {
+    isDarkMode?: boolean;
+}> = ({ isOpen, onClose, onConfirm, itemName, itemType, isDarkMode = false }) => {
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all animate-fade-in-up">
+            <div className={`rounded-lg shadow-2xl w-full max-w-md transform transition-all animate-fade-in-up ${
+                isDarkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-gray-900">Silme Onayı</h3>
-                        <button onClick={onClose} className="text-gray-500 hover:text-gray-800 transition-colors p-1">
+                        <h3 className={`text-lg font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Silme Onayı</h3>
+                        <button onClick={onClose} className={`transition-colors p-1 ${
+                            isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-800'
+                        }`}>
                             <XMarkIcon className="w-5 h-5" />
                         </button>
                     </div>
                     
                     <div className="mb-6">
-                        <p className="text-gray-700 mb-2">
+                        <p className={`mb-2 transition-colors ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                             <span className="font-semibold">{itemName}</span> {itemType}ini silmek istediğinizden emin misiniz?
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className={`text-sm transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                             Bu işlem geri alınamaz.
                         </p>
                     </div>
@@ -41,7 +47,11 @@ const DeleteConfirmationModal: React.FC<{
                     <div className="flex gap-3 justify-end">
                         <button
                             onClick={onClose}
-                            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-medium"
+                            className={`px-4 py-2 rounded-md transition-colors font-medium ${
+                                isDarkMode 
+                                    ? 'text-gray-200 bg-gray-700 hover:bg-gray-600' 
+                                    : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                            }`}
                         >
                             İptal
                         </button>
@@ -91,7 +101,7 @@ const TopicStatusSelector: React.FC<{
     );
 };
 
-export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjectsChange, onScheduleStudySession }) => {
+export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjectsChange, onScheduleStudySession, isDarkMode = false }) => {
     const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(subjects[0]?.id || null);
     const [newSubjectName, setNewSubjectName] = useState('');
     const [newResourceName, setNewResourceName] = useState('');
@@ -201,25 +211,27 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
 
     return (
         <>
-        <div className="flex flex-col h-full bg-slate-50">
+        <div className={`flex flex-col h-full transition-colors duration-200 ${isDarkMode ? 'bg-gray-900' : 'bg-slate-50'}`}>
 
-            <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+            <div className={`border-b px-4 py-3 flex items-center justify-between transition-colors duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-slate-200'}`}>
                 <div className="flex items-center gap-3">
                     <button 
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="lg:hidden p-2 rounded-md hover:bg-slate-100 transition-colors"
+                        className={`lg:hidden p-2 rounded-md transition-colors ${
+                            isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-slate-100'
+                        }`}
                     >
-                        <Bars3Icon className="w-6 h-6 text-slate-600" />
+                        <Bars3Icon className={`w-6 h-6 transition-colors ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`} />
                     </button>
                     {selectedSubject ? (
-                        <h2 className="text-xl font-bold text-slate-800">{selectedSubject.name}</h2>
+                        <h2 className={`text-xl font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{selectedSubject.name}</h2>
                     ) : (
-                        <h2 className="text-xl font-bold text-slate-800">Çalışma Planlayıcı</h2>
+                        <h2 className={`text-xl font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Çalışma Planlayıcı</h2>
                     )}
                 </div>
                 {selectedSubject && (
                     <div className="hidden sm:flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-600">İlerleme:</span>
+                        <span className={`text-sm font-medium transition-colors ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>İlerleme:</span>
                         <span className="text-sm font-bold text-indigo-600">{Math.round(progress)}%</span>
                     </div>
                 )}
@@ -232,27 +244,30 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                     lg:translate-x-0
                     fixed lg:relative
                     top-0 left-0 h-full w-80 lg:w-80
-                    bg-white border-r border-slate-200
+                    transition-colors duration-200
                     z-30 transition-transform duration-300 ease-in-out
                     lg:z-auto
+                    ${isDarkMode ? 'bg-gray-800 border-r border-gray-700' : 'bg-white border-r border-slate-200'}
                 `}>
                     <div className="flex flex-col h-full">
 
-                        <div className="p-4 border-b border-slate-200 lg:hidden">
+                        <div className={`p-4 border-b lg:hidden transition-colors duration-200 ${isDarkMode ? 'border-gray-700' : 'border-slate-200'}`}>
                             <div className="flex items-center justify-between">
-                                <h3 className="font-semibold text-slate-700 text-lg">Dersler</h3>
+                                <h3 className={`font-semibold text-lg transition-colors ${isDarkMode ? 'text-white' : 'text-slate-700'}`}>Dersler</h3>
                                 <button 
                                     onClick={() => setIsSidebarOpen(false)}
-                                    className="p-2 rounded-md hover:bg-slate-100 transition-colors"
+                                    className={`p-2 rounded-md transition-colors ${
+                                        isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-slate-100'
+                                    }`}
                                 >
-                                    <XMarkIcon className="w-6 h-6 text-slate-600" />
+                                    <XMarkIcon className={`w-6 h-6 transition-colors ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`} />
                                 </button>
                             </div>
                         </div>
 
 
                         <div className="flex-1 overflow-y-auto p-4">
-                            <h3 className="font-semibold text-slate-700 text-lg mb-4 hidden lg:block">Dersler</h3>
+                            <h3 className={`font-semibold text-lg mb-4 hidden lg:block transition-colors ${isDarkMode ? 'text-white' : 'text-slate-700'}`}>Dersler</h3>
                             <div className="space-y-2">
                                 {subjects.map(subject => (
                                     <div
@@ -260,7 +275,9 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                         className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
                                             selectedSubjectId === subject.id 
                                                 ? 'bg-indigo-600 text-white shadow-md' 
-                                                : 'hover:bg-slate-100 text-slate-700'
+                                                : isDarkMode
+                                                    ? 'hover:bg-gray-700 text-gray-200'
+                                                    : 'hover:bg-slate-100 text-slate-700'
                                         }`}
                                     >
                                         <button
@@ -277,7 +294,9 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                             className={`p-1 rounded-full transition-colors ${
                                                 selectedSubjectId === subject.id
                                                     ? 'text-white hover:bg-white hover:bg-opacity-20'
-                                                    : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
+                                                    : isDarkMode
+                                                        ? 'text-gray-400 hover:text-red-400 hover:bg-red-900'
+                                                        : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
                                             }`}
                                         >
                                             <TrashIcon className="w-4 h-4" />
@@ -288,7 +307,7 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                         </div>
 
 
-                        <div className="p-4 border-t border-slate-200">
+                        <div className={`p-4 border-t transition-colors duration-200 ${isDarkMode ? 'border-gray-700' : 'border-slate-200'}`}>
                             <div className="flex gap-2">
                                 <input
                                     type="text"
@@ -296,7 +315,11 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                     onChange={e => setNewSubjectName(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleAddSubject()}
                                     placeholder="Yeni ders ekle..."
-                                    className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                    className={`flex-1 px-3 py-2 text-sm border rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${
+                                        isDarkMode 
+                                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                                            : 'bg-white border-slate-300 text-gray-900 placeholder-gray-500'
+                                    }`}
                                 />
                                 <button 
                                     onClick={handleAddSubject} 
@@ -338,10 +361,10 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                 </div>
                                 <div className="hidden sm:block">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="text-sm font-medium text-slate-600">İlerleme</span>
+                                        <span className={`text-sm font-medium transition-colors ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>İlerleme</span>
                                         <span className="text-sm font-bold text-indigo-600">{Math.round(progress)}%</span>
                                     </div>
-                                    <div className="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div className={`w-full rounded-full h-2.5 transition-colors ${isDarkMode ? 'bg-gray-700' : 'bg-slate-200'}`}>
                                         <div 
                                             className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" 
                                             style={{ width: `${progress}%` }}
@@ -353,7 +376,7 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
 
                             <div className="flex flex-col gap-4">
                                 <div className="flex items-center justify-between">
-                                    <h4 className="font-semibold text-slate-700 text-xl">Konular</h4>
+                                    <h4 className={`font-semibold text-xl transition-colors ${isDarkMode ? 'text-white' : 'text-slate-700'}`}>Konular</h4>
                                     <div className="flex gap-2">
                                         <input 
                                             type="text" 
@@ -361,7 +384,11 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                             onChange={e => setNewTopicName(e.target.value)}  
                                             onKeyDown={e => e.key === 'Enter' && handleAddTopic()} 
                                             placeholder="Yeni konu ekle..." 
-                                            className="px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                            className={`px-3 py-2 text-sm border rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${
+                                                isDarkMode 
+                                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                                                    : 'bg-white border-slate-300 text-gray-900 placeholder-gray-500'
+                                            }`}
                                         />
                                         <button 
                                             onClick={handleAddTopic} 
@@ -374,9 +401,13 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                 
                                 <div className="space-y-3">
                                     {selectedSubject.topics.length > 0 ? selectedSubject.topics.map(topic => (
-                                        <div key={topic.id} className="p-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div key={topic.id} className={`p-4 rounded-lg border shadow-sm hover:shadow-md transition-all ${
+                                            isDarkMode 
+                                                ? 'bg-gray-800 border-gray-700 shadow-gray-900' 
+                                                : 'bg-white border-slate-200'
+                                        }`}>
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                                <span className="flex-grow font-medium text-slate-800 text-lg">{topic.name}</span>
+                                                <span className={`flex-grow font-medium text-lg transition-colors ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{topic.name}</span>
                                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                                                     <TopicStatusSelector 
                                                         currentStatus={topic.status} 
@@ -391,7 +422,11 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                                     </button>
                                                     <button 
                                                         onClick={() => handleDeleteTopic(topic.id)} 
-                                                        className="p-2 text-slate-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
+                                                        className={`p-2 rounded-full transition-colors ${
+                                                            isDarkMode
+                                                                ? 'text-gray-400 hover:text-red-400 hover:bg-red-900'
+                                                                : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
+                                                        }`}
                                                     >
                                                         <TrashIcon className="w-5 h-5"/>
                                                     </button>
@@ -400,9 +435,9 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                                         </div>
                                     )) : (
                                         <div className="text-center py-12">
-                                            <BookOpenIcon className="w-16 h-16 mx-auto text-slate-300 mb-4"/>
-                                            <h3 className="text-lg font-semibold text-slate-600 mb-2">Henüz Konu Yok</h3>
-                                            <p className="text-slate-500">Başlamak için yukarıdan bir konu ekleyin.</p>
+                                            <BookOpenIcon className={`w-16 h-16 mx-auto mb-4 transition-colors ${isDarkMode ? 'text-gray-600' : 'text-slate-300'}`}/>
+                                            <h3 className={`text-lg font-semibold mb-2 transition-colors ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Henüz Konu Yok</h3>
+                                            <p className={`transition-colors ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Başlamak için yukarıdan bir konu ekleyin.</p>
                                         </div>
                                     )}
                                 </div>
@@ -411,9 +446,9 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
                     ) : (
                         <div className="flex-1 flex items-center justify-center p-4">
                             <div className="text-center">
-                                <BookOpenIcon className="w-16 h-16 mx-auto text-slate-300 mb-4"/>
-                                <h3 className="text-lg font-semibold text-slate-600 mb-2">Ders Seçin</h3>
-                                <p className="text-slate-500 mb-4">Başlamak için soldaki listeden bir ders seçin veya yeni bir ders ekleyin.</p>
+                                <BookOpenIcon className={`w-16 h-16 mx-auto mb-4 transition-colors ${isDarkMode ? 'text-gray-600' : 'text-slate-300'}`}/>
+                                <h3 className={`text-lg font-semibold mb-2 transition-colors ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Ders Seçin</h3>
+                                <p className={`mb-4 transition-colors ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Başlamak için soldaki listeden bir ders seçin veya yeni bir ders ekleyin.</p>
                                 <button 
                                     onClick={() => setIsSidebarOpen(true)}
                                     className="lg:hidden px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
@@ -434,6 +469,7 @@ export const StudyTracker: React.FC<StudyTrackerProps> = ({ subjects, onSubjects
             onConfirm={deleteModal.onConfirm}
             itemName={deleteModal.itemName}
             itemType={deleteModal.itemType}
+            isDarkMode={isDarkMode}
         />
         </>
     );

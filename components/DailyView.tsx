@@ -11,9 +11,10 @@ interface DailyViewProps {
   onTimeSlotClick: (date: Date) => void;  
   onToggleComplete: (eventId: number) => void;
   onEventDelete: (eventId: number) => void;
+  isDarkMode?: boolean;
 }
 
-export const DailyView: React.FC<DailyViewProps> = ({ currentDate, events, onEventClick, onEventDrop, onTimeSlotClick, onToggleComplete, onEventDelete }) => {
+export const DailyView: React.FC<DailyViewProps> = ({ currentDate, events, onEventClick, onEventDrop, onTimeSlotClick, onToggleComplete, onEventDelete, isDarkMode = false }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentTimeTop, setCurrentTimeTop] = useState<number | null>(null);
 
@@ -196,7 +197,7 @@ export const DailyView: React.FC<DailyViewProps> = ({ currentDate, events, onEve
         <div className="w-16 sm:w-20 text-right pr-2 sm:pr-4 flex-shrink-0">
           {Array.from({ length: 24 }).map((_, i) => (
             <div key={i} className="h-16 relative">
-              <span className="text-xs sm:text-sm text-gray-500 absolute -top-2.5 right-2 sm:right-4">
+              <span className={`text-xs sm:text-sm absolute -top-2.5 right-2 sm:right-4 transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 {`${i.toString().padStart(2, '0')}:00`}
               </span>
             </div>
@@ -204,10 +205,10 @@ export const DailyView: React.FC<DailyViewProps> = ({ currentDate, events, onEve
         </div>
         
         {/* Events Pane - Mobile Optimized */}
-        <div className="flex-grow border-l border-gray-200 relative" onDrop={handleDrop} onDragOver={handleDragOver} onClick={handleTimeSlotClick}>
+        <div className={`flex-grow border-l relative transition-colors ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`} onDrop={handleDrop} onDragOver={handleDragOver} onClick={handleTimeSlotClick}>
           {/* Hour lines */}
           {Array.from({ length: 24 }).map((_, i) => (
-            <div key={i} className="h-16 border-b border-gray-200"></div>
+            <div key={i} className={`h-16 border-b transition-colors ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
           ))}
           
           {/* Current Time Indicator */}

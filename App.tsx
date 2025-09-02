@@ -38,6 +38,7 @@ const App: React.FC = () => {
   const [workSessions, setWorkSessions] = useLocalStorage<WorkSession[]>('work-sessions', []);
   const [subjects, setSubjects] = useLocalStorage<StudySubject[]>('study-subjects', []);
   const [activeView, setActiveView] = useLocalStorage<MainView>('main-app-view', 'calendar');
+  const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>('dark-mode', false);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<SchedulerEvent | null>(null);
@@ -235,26 +236,49 @@ const App: React.FC = () => {
   const renderCalendarView = () => {
     switch (view) {
       case ViewType.Day:
-        return <DailyView currentDate={currentDate} events={filteredEvents} onEventClick={handleEventClick} onEventDrop={handleEventDrop} onTimeSlotClick={handleTimeSlotClick} onToggleComplete={handleToggleEventComplete} onEventDelete={handleDeleteEvent} />;
+        return <DailyView currentDate={currentDate} events={filteredEvents} onEventClick={handleEventClick} onEventDrop={handleEventDrop} onTimeSlotClick={handleTimeSlotClick} onToggleComplete={handleToggleEventComplete} onEventDelete={handleDeleteEvent} isDarkMode={isDarkMode} />;
       case ViewType.Week:
-        return <WeeklyView currentDate={currentDate} events={filteredEvents} onEventClick={handleEventClick} onEventDrop={handleEventDrop} onTimeSlotClick={handleTimeSlotClick} onToggleComplete={handleToggleEventComplete} onEventDelete={handleDeleteEvent} />;
+        return <WeeklyView currentDate={currentDate} events={filteredEvents} onEventClick={handleEventClick} onEventDrop={handleEventDrop} onTimeSlotClick={handleTimeSlotClick} onToggleComplete={handleToggleEventComplete} onEventDelete={handleDeleteEvent} isDarkMode={isDarkMode} />;
       case ViewType.Month:
       default:
-        return <MonthlyView currentDate={currentDate} events={filteredEvents} onEventClick={handleEventClick} onDateClick={handleDateClick} onToggleComplete={handleToggleEventComplete} onEventDelete={handleDeleteEvent} />;
+        return <MonthlyView currentDate={currentDate} events={filteredEvents} onEventClick={handleEventClick} onDateClick={handleDateClick} onToggleComplete={handleToggleEventComplete} onEventDelete={handleDeleteEvent} isDarkMode={isDarkMode} />;
     }
   };
 
   return (
-    <div className="flex flex-col h-screen font-sans bg-gray-50">
+    <div className={`flex flex-col h-screen font-sans transition-colors duration-200 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Mobile Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
+      <header className={`shadow-sm border-b px-4 py-3 transition-colors duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-900">Plan AI</h1>
+          <h1 className={`text-lg font-semibold transition-colors duration-200 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Plan AI</h1>
           <div className="flex items-center space-x-2">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm ${
+                isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              {isDarkMode ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
             {/* Search Icon */}
             <button
               onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-              className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors text-sm"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm ${
+                isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -262,7 +286,11 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setIsProductivityPanelOpen(true)}
-              className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors text-sm"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm ${
+                isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -281,9 +309,15 @@ const App: React.FC = () => {
                 placeholder="Etkinlik ara..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className={`w-full pl-10 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                }`}
               />
-              <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`absolute left-3 top-2.5 w-4 h-4 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-400'
+              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -292,14 +326,16 @@ const App: React.FC = () => {
       </header>
 
       {/* Mobile Navigation - Minimal */}
-      <nav className="bg-white border-b border-gray-200 px-3 py-2">
-        <div className="flex space-x-0.5 bg-gray-100 rounded-md p-0.5">
+      <nav className={`border-b px-3 py-2 transition-colors duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className={`flex space-x-0.5 rounded-md p-0.5 transition-colors duration-200 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
           <button
             onClick={() => setActiveView('calendar')}
             className={`flex-1 py-1 px-2 rounded-md text-xs font-medium transition-all duration-200 ${
               activeView === 'calendar'
                 ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                : isDarkMode
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-600'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
             }`}
           >
             Takvim
@@ -309,7 +345,9 @@ const App: React.FC = () => {
             className={`flex-1 py-1 px-2 rounded-md text-xs font-medium transition-all duration-200 ${
               activeView === 'study'
                 ? 'bg-green-600 text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                : isDarkMode
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-600'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
             }`}
           >
             Çalışma
@@ -402,23 +440,24 @@ const App: React.FC = () => {
             </div>
 
             {/* AI-Powered Schedule Input - Minimal */}
-            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
-              <ScheduleInputBar onSchedule={handleScheduleFromText} />
+            <div className={`border-b px-4 py-2 transition-colors duration-200 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+              <ScheduleInputBar onSchedule={handleScheduleFromText} isDarkMode={isDarkMode} />
             </div>
 
             {/* Calendar Content */}
-            <div className="flex-1 overflow-auto bg-gray-50">
+            <div className={`flex-1 overflow-auto transition-colors duration-200 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
               {renderCalendarView()}
             </div>
           </div>
         )}
 
         {activeView === 'study' && (
-          <div className="h-full bg-gray-50 overflow-hidden">
+          <div className={`h-full overflow-hidden transition-colors duration-200 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
             <StudyTracker 
               subjects={subjects} 
               onSubjectsChange={setSubjects} 
               onScheduleStudySession={handleScheduleStudySession}
+              isDarkMode={isDarkMode}
             />
           </div>
         )}

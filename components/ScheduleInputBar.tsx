@@ -3,9 +3,10 @@ import { SparklesIcon } from './icons';
 
 interface ScheduleInputBarProps {
     onSchedule: (text: string) => void;
+    isDarkMode?: boolean;
 }
 
-export const ScheduleInputBar: React.FC<ScheduleInputBarProps> = ({ onSchedule }) => {
+export const ScheduleInputBar: React.FC<ScheduleInputBarProps> = ({ onSchedule, isDarkMode = false }) => {
     const [text, setText] = useState('');
 
     const handleSubmit = () => {
@@ -39,7 +40,11 @@ export const ScheduleInputBar: React.FC<ScheduleInputBarProps> = ({ onSchedule }
                         onInput={handleInput}
                         rows={1}
                         placeholder="Programınızı yazarak planlayın..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none overflow-hidden bg-white text-sm placeholder-gray-400"
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none overflow-hidden text-sm ${
+                            isDarkMode 
+                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                        }`}
                     />
                 </div>
                 <button

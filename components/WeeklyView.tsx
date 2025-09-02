@@ -11,14 +11,15 @@ interface WeeklyViewProps {
   onTimeSlotClick: (date: Date) => void;
   onToggleComplete: (eventId: number) => void;
   onEventDelete: (eventId: number) => void;
+  isDarkMode?: boolean;
 }
 
-const TimeGutter: React.FC = () => (
+const TimeGutter: React.FC<{ isDarkMode?: boolean }> = ({ isDarkMode = false }) => (
   <div className="w-12 flex-shrink-0">
-    <div className="h-8 sticky top-0 bg-white z-10"></div>
+    <div className={`h-8 sticky top-0 z-10 transition-colors ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}></div>
     {Array.from({ length: 24 }).map((_, i) => (
       <div key={i} className="h-12 relative">
-        <span className="text-xs text-gray-500 absolute -top-1.5 right-2">
+        <span className={`text-xs absolute -top-1.5 right-2 transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
           {`${i.toString().padStart(2, '0')}:00`}
         </span>
       </div>
@@ -26,7 +27,7 @@ const TimeGutter: React.FC = () => (
   </div>
 );
 
-const DayColumn: React.FC<{ day: Date; dayEvents: SchedulerEvent[]; events: SchedulerEvent[]; onEventClick: (event: SchedulerEvent) => void; onEventDrop: (eventId: number, newStart: Date, newEnd: Date) => void; onTimeSlotClick: (date: Date) => void; onToggleComplete: (eventId: number) => void; onEventDelete: (eventId: number) => void; }> = ({ day, dayEvents, events, onEventClick, onEventDrop, onTimeSlotClick, onToggleComplete, onEventDelete }) => {
+const DayColumn: React.FC<{ day: Date; dayEvents: SchedulerEvent[]; events: SchedulerEvent[]; onEventClick: (event: SchedulerEvent) => void; onEventDrop: (eventId: number, newStart: Date, newEnd: Date) => void; onTimeSlotClick: (date: Date) => void; onToggleComplete: (eventId: number) => void; onEventDelete: (eventId: number) => void; isDarkMode?: boolean }> = ({ day, dayEvents, events, onEventClick, onEventDrop, onTimeSlotClick, onToggleComplete, onEventDelete, isDarkMode = false }) => {
     const today = new Date();
     const isToday = isSameDay(day, today);
     const [currentTimeTop, setCurrentTimeTop] = useState<number | null>(null);
@@ -175,14 +176,14 @@ const DayColumn: React.FC<{ day: Date; dayEvents: SchedulerEvent[]; events: Sche
     };
 
     return (
-        <div className="flex-1 border-l border-gray-200 relative">
-          <div className="text-center py-1.5 sticky top-0 bg-white z-10 border-b border-gray-200">
-            <p className="text-xs text-gray-500">{day.toLocaleDateString('tr-TR', { weekday: 'short' })}</p>
-            <p className={`text-sm font-semibold ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>{day.getDate()}</p>
+        <div className={`flex-1 border-l relative transition-colors ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className={`text-center py-1.5 sticky top-0 z-10 border-b transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            <p className={`text-xs transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{day.toLocaleDateString('tr-TR', { weekday: 'short' })}</p>
+            <p className={`text-sm font-semibold transition-colors ${isToday ? 'text-blue-400' : isDarkMode ? 'text-white' : 'text-gray-900'}`}>{day.getDate()}</p>
           </div>
           <div className="relative h-[calc(24*3rem)]" onDrop={handleDrop} onDragOver={handleDragOver} onClick={handleTimeSlotClick}>
             {Array.from({ length: 24 }).map((_, i) => (
-              <div key={i} className="h-12 border-b border-gray-200"></div>
+              <div key={i} className={`h-12 border-b transition-colors ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
             ))}
             {currentTimeTop !== null && (
                 <div className="absolute left-0 right-0 flex items-center" style={{ top: `${currentTimeTop}%`, zIndex: 20 }}>
@@ -248,7 +249,7 @@ const DayColumn: React.FC<{ day: Date; dayEvents: SchedulerEvent[]; events: Sche
     );
 };
 
-export const WeeklyView: React.FC<WeeklyViewProps> = ({ currentDate, events, onEventClick, onEventDrop, onTimeSlotClick, onToggleComplete, onEventDelete }) => {
+export const WeeklyView: React.FC<WeeklyViewProps> = ({ currentDate, events, onEventClick, onEventDrop, onTimeSlotClick, onToggleComplete, onEventDelete, isDarkMode = false }) => {
   const weekDays = getWeekDays(currentDate);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -273,10 +274,10 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ currentDate, events, onE
   return (
     <div ref={scrollContainerRef} className="overflow-auto h-full">
       <div className="flex">
-        <TimeGutter />
+        <TimeGutter isDarkMode={isDarkMode} />
         {weekDays.map(day => {
           const dayEvents = events.filter(e => isSameDay(e.start, day));
-          return <DayColumn key={day.toISOString()} day={day} dayEvents={dayEvents} events={events} onEventClick={onEventClick} onEventDrop={onEventDrop} onTimeSlotClick={onTimeSlotClick} onToggleComplete={onToggleComplete} onEventDelete={onEventDelete}/>;
+          return <DayColumn key={day.toISOString()} day={day} dayEvents={dayEvents} events={events} onEventClick={onEventClick} onEventDrop={onEventDrop} onTimeSlotClick={onTimeSlotClick} onToggleComplete={onToggleComplete} onEventDelete={onEventDelete} isDarkMode={isDarkMode}/>;
         })}
       </div>
     </div>

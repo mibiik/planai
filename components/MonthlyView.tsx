@@ -10,18 +10,19 @@ interface MonthlyViewProps {
   onDateClick: (date: Date) => void;
   onToggleComplete: (eventId: number) => void;
   onEventDelete: (eventId: number) => void;
+  isDarkMode?: boolean;
 }
 
-export const MonthlyView: React.FC<MonthlyViewProps> = ({ currentDate, events, onEventClick, onDateClick, onToggleComplete, onEventDelete }) => {
+export const MonthlyView: React.FC<MonthlyViewProps> = ({ currentDate, events, onEventClick, onDateClick, onToggleComplete, onEventDelete, isDarkMode = false }) => {
   const weeks = getMonthGrid(currentDate);
   const today = new Date();
   const weekDayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 
   return (
     <div className="overflow-hidden flex flex-col h-full">
-      <div className="grid grid-cols-7 border-b border-gray-200">
+      <div className={`grid grid-cols-7 border-b transition-colors ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         {weekDayNames.map(day => (
-          <div key={day} className="py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-600 uppercase tracking-wider">
+          <div key={day} className={`py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             {day}
           </div>
         ))}
@@ -35,10 +36,18 @@ export const MonthlyView: React.FC<MonthlyViewProps> = ({ currentDate, events, o
           return (
             <div
               key={index}
-              className={`p-1 sm:p-3 border-t border-r border-gray-200 flex flex-col relative transition-colors cursor-pointer hover:bg-gray-50 ${!isCurrentMonth ? 'bg-gray-50 text-gray-400' : 'bg-white'}`}
+              className={`p-1 sm:p-3 border-t border-r flex flex-col relative transition-colors cursor-pointer ${
+                isDarkMode 
+                  ? `${!isCurrentMonth ? 'bg-gray-800 border-gray-700 text-gray-500 hover:bg-gray-700' : 'bg-gray-900 border-gray-700 hover:bg-gray-800'}` 
+                  : `${!isCurrentMonth ? 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-50' : 'bg-white border-gray-200 hover:bg-gray-50'}`
+              }`}
               onClick={() => onDateClick(day)}
             >
-              <div className={`text-sm sm:text-base font-medium mb-1 sm:mb-2 self-start ${isToday ? 'bg-blue-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center' : 'text-gray-700'}`}>
+              <div className={`text-sm sm:text-base font-medium mb-1 sm:mb-2 self-start transition-colors ${
+                isToday 
+                  ? 'bg-blue-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center' 
+                  : isDarkMode ? 'text-gray-200' : 'text-gray-700'
+              }`}>
                 {day.getDate()}
               </div>
               <div className="flex-grow space-y-0.5 sm:space-y-1 overflow-y-auto">
@@ -80,7 +89,7 @@ export const MonthlyView: React.FC<MonthlyViewProps> = ({ currentDate, events, o
                   );
                 })}
                 {dailyEvents.length > 2 && (
-                   <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                   <div className={`text-xs sm:text-sm mt-1 transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                      + {dailyEvents.length - 2} daha
                    </div>
                 )}
