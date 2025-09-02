@@ -1,20 +1,73 @@
+# Plan AI - Akıllı Verimlilik Uygulaması
+
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+<img width="1200" height="475" alt="Plan AI Banner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+## 📋 Proje Hakkında
 
-This contains everything you need to run your app locally.
+Plan AI, yapay zeka destekli bir verimlilik ve planlama uygulamasıdır. Kullanıcıların günlük görevlerini, etkinliklerini ve çalışma oturumlarını akıllı bir şekilde yönetmelerine yardımcı olur.
 
-View your app in AI Studio: https://ai.studio/apps/drive/10a6x6hskvcuBv8EN8tIK1V_nV7hW_dW5
+## ✨ Özellikler
 
-## Run Locally
+- 📅 **Akıllı Takvim Görünümleri**: Günlük, haftalık ve aylık görünümler
+- 🤖 **AI Destekli Planlama**: Metin tabanlı görev oluşturma
+- ⏱️ **Pomodoro Zamanlayıcısı**: Odaklanma oturumları için
+- 📊 **Çalışma Takibi**: Çalışma oturumlarını izleme ve analiz
+- 🎯 **Akıllı Odaklanma**: Verimlilik araçları
+- 📝 **Hızlı Ekleme**: Görev ve etkinlik ekleme
+- 🌙 **Karanlık Mod**: Göz yorgunluğunu azaltan arayüz
 
-**Prerequisites:**  Node.js
+## 🚀 Kurulum
 
+**Gereksinimler:** Node.js
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Bağımlılıkları yükleyin:
+   ```bash
+   npm install
+   ```
+
+2. Gemini API anahtarınızı `.env.local` dosyasında ayarlayın:
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
+
+3. Uygulamayı çalıştırın:
+   ```bash
+   npm run dev
+   ```
+
+## 🛠️ Teknolojiler
+
+- **Frontend**: React 19, TypeScript
+- **Build Tool**: Vite
+- **AI**: Google Gemini API
+- **Styling**: CSS Modules
+
+## 📁 Proje Yapısı
+
+```
+plan-ai/
+├── components/          # React bileşenleri
+├── hooks/              # Custom React hooks
+├── utils/              # Yardımcı fonksiyonlar
+├── types.ts            # TypeScript tip tanımları
+├── App.tsx             # Ana uygulama bileşeni
+└── package.json        # Proje bağımlılıkları
+```
+
+## 🤝 Katkıda Bulunma
+
+1. Bu repository'yi fork edin
+2. Yeni bir branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
+4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.
+
+---
+
+**Plan AI** ile verimliliğinizi artırın! 🚀
